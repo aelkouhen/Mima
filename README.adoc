@@ -1,0 +1,38 @@
+= Mima API
+
+Quick setup — if you’ve done this kind of thing before Set up
+
+----
+git init
+git add README.adoc
+git commit -m "first commit"
+git remote add origin https://github.com/aelkouhen/Mima.git
+git push -u origin master
+----
+
+…or push an existing repository from the command line
+
+----
+git remote add origin https://github.com/aelkouhen/Mima.git
+git push -u origin master
+----
+
+
+== Install MySQL image
+
+Pull the latest MySQL image
+
+----
+docker pull mysql:latest
+----
+
+Then run it to create an instance named `mysql-mima`
+
+----
+docker run -p 3306:3306 --name mysql-mima -e MYSQL_ROOT_PASSWORD=password-root -d mysql:latest
+----
+
+[NOTE]
+====
+If you have troubles to connect MySQL Workbench (address not found), try to install VirtualBox then run `docker-machine ip default` to get the MySQL server adresse.
+====
