@@ -47,6 +47,9 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
+    public static final int ONE_DAY= 60 * 60 * 24;
+    public static final int ONE_MONTH = ONE_DAY * 30;
+
     @Bean
     public OAuth2RequestFactory requestFactory() {
         CustomOauth2RequestFactory requestFactory = new CustomOauth2RequestFactory(clientDetailsService);
@@ -68,7 +71,15 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.jdbc(dataSource).passwordEncoder(passwordEncoder);
+        //clients.jdbc(dataSource).passwordEncoder(passwordEncoder);
+        clients.inMemory()
+                .withClient("USER_CLIENT_APP")
+                .secret(passwordEncoder.encode("password"))
+                .authorizedGrantTypes("authorization_code","password","refresh_token","implicit")
+                .scopes("READ_PRIVILEGE", "UPDATE_PRIVILEGE", "DELETE_PRIVILEGE", "CREATE_PRIVILEGE")
+                .resourceIds("USER_CLIENT_RESOURCE","USER_ADMIN_RESOURCE")
+                .accessTokenValiditySeconds(ONE_DAY)
+                .refreshTokenValiditySeconds(ONE_MONTH);
     }
 
 
