@@ -4,9 +4,6 @@ import com.carhub.api.auth.domain.User;
 import com.carhub.api.auth.services.CustomUserDetailsService;
 import com.carhub.api.auth.services.RoleService;
 import com.carhub.api.auth.utils.exception.ElementNotFoundException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-@Api(value = "User", tags = "User Queries", description = "This API queries the User concept.")
 @RestController
 @RequestMapping("/api/")
 public class UserQueryController {
@@ -32,23 +28,22 @@ public class UserQueryController {
     private RoleService roleService;
 
     @PreAuthorize("#oauth2.isUser()")
-    @GetMapping(value = "/users/me")
+    @GetMapping(value = "/users/iam")
     @ResponseBody
-    public ResponseEntity<?> me(){
+    public ResponseEntity<?> aboutMe(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails result = userDetailsService.loadUserByUsername(authentication.getPrincipal().toString());
         if (result == null) throw new ElementNotFoundException(User.class);
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "List the Users : Retrieve the User list paged and sorted by field.", notes = "It takes the page number, a size for each page, a sorting order and the field on which the list is sorted.", response = List.class, responseContainer = "List")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/users")
     @ResponseBody
-    public ResponseEntity<?> getUsers( @ApiParam(name = "page", example="0", value = "The page number.", required = true) @RequestParam int page,
-                                       @ApiParam(name = "size", example="10", value = "The size of the page.", required = true) @RequestParam int size,
-                                       @ApiParam(name = "order", example="DESC", value = "The sorting order (DESC or ASC).", required = true) @RequestParam(name = "order") String sortDirection,
-                                       @ApiParam(name = "field", example="username", value = "The sort field name.", required = true) @RequestParam(name = "field") String sort){
+    public ResponseEntity<?> getUsers( @RequestParam int page,
+                                       @RequestParam int size,
+                                       @RequestParam(name = "order") String sortDirection,
+                                       @RequestParam(name = "field") String sort){
         List<User> results;
         if(sortDirection.toLowerCase().equals("asc"))
             results = userDetailsService.getUsersListAsc(page, size, sort);
@@ -59,7 +54,6 @@ public class UserQueryController {
         return ResponseEntity.ok(results);
     }
 
-    @ApiOperation(value = "Count the Users.", response = long.class, responseContainer = "long")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/users/count")
     @ResponseBody
@@ -67,31 +61,28 @@ public class UserQueryController {
         return userDetailsService.countAllUsers();
     }
 
-    @ApiOperation(value = "Find user by username", response = UserDetails.class, responseContainer = "UserDetails")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/users/find", params = "username")
     @ResponseBody
-    public ResponseEntity<UserDetails> findUserByUsername(@ApiParam(name = "username", value = "The username.", required = true) @RequestParam(name = "username") String username){
+    public ResponseEntity<UserDetails> findUserByUsername(@RequestParam(name = "username") String username){
         UserDetails result = userDetailsService.loadUserByUsername(username);
         if (result == null) throw new ElementNotFoundException(User.class);
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "Find user by ID", response = UserDetails.class, responseContainer = "UserDetails")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/users/find", params = "id")
     @ResponseBody
-    public ResponseEntity<UserDetails> findUserById(@ApiParam(name = "ID", value = "The user ID.", required = true) @RequestParam(name = "id") String id){
+    public ResponseEntity<UserDetails> findUserById(@RequestParam(name = "id") String id){
         UserDetails result = userDetailsService.loadUserById(UUID.fromString(id));
         if (result == null) throw new ElementNotFoundException(User.class);
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "Get user roles by username", response = Collection.class, responseContainer = "Collection")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/users/{username}/roles")
     @ResponseBody
-    public ResponseEntity<Collection<? extends GrantedAuthority>> getAuthorities(@ApiParam(name = "username", value = "The username.", required = true) @PathVariable(name = "username") String username){
+    public ResponseEntity<Collection<? extends GrantedAuthority>> getAuthorities(@PathVariable(name = "username") String username){
         Collection<? extends GrantedAuthority> results = userDetailsService.loadUserByUsername(username).getAuthorities();
         if (results == null || results.isEmpty()) throw new ElementNotFoundException(User.class);
         return ResponseEntity.ok(results);

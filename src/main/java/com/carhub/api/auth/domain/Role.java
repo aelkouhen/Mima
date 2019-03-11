@@ -19,6 +19,7 @@ public class Role {
     @Type(type = "uuid-char")
     private UUID id;
 
+    @Column(name="name", unique=true)
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER)

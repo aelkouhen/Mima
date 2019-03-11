@@ -4,6 +4,7 @@ import com.carhub.api.auth.domain.Role;
 import com.carhub.api.auth.domain.User;
 import com.carhub.api.auth.repositories.RoleRepository;
 import com.carhub.api.auth.repositories.UserRepository;
+import com.carhub.api.auth.utils.exception.ElementNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -64,37 +65,106 @@ public class CustomUserDetailsService implements UserDetailsService {
         return getUsersPage(page, size, Sort.Direction.DESC, sort).getContent();
     }
 
-    public long countAllUsers(){
+    public long countAllUsers() {
         return userRepository.count();
     }
 
-    public User createUser(User user){
+    public User createUser(User user) {
         return userRepository.save(user);
     }
 
 
-    public User addRole(User user, Role role){
-        User userToUpdate = userRepository.findById(user.getId()).get();
-        Role roleToAdd = roleRepository.findById(role.getId()).get();
-        userToUpdate.addRole(roleToAdd);
+    public User updateUser(String username, User user) {
+        User userToUpdate = userRepository.findByUsername(username);
+        if (user == null)
+            throw new ElementNotFoundException(User.class);
+
+        userToUpdate.setPassword(user.getPassword());
+        userToUpdate.setEmail(user.getEmail());
+        user.getRoles().forEach(r -> {
+            userToUpdate.addRole(r);
+        });
         return userRepository.save(userToUpdate);
     }
 
-    public User updateUsername(User user, String username){
-        User userToUpdate = userRepository.findById(user.getId()).get();
-        userToUpdate.setUsername(username);
-        return userRepository.save(userToUpdate);
+    public User grantRole(String username, String role) {
+        User userToUpdate = userRepository.findByUsername(username);
+        if (userToUpdate == null)
+            throw new ElementNotFoundException(User.class);
+
+        Role roleToGrant = roleRepository.findByName(role);
+        if (roleToGrant == null)
+            throw new ElementNotFoundException(Role.class);
+
+        return addRole(userToUpdate, roleToGrant);
     }
 
-    public User updatePassword(User user, String password){
+    public User revokeRole(String username, String role) {
+        User userToUpdate = userRepository.findByUsername(username);
+        if (userToUpdate == null)
+            throw new ElementNotFoundException(User.class);
+
+        Role roleToRevoke = roleRepository.findByName(role);
+        if (roleToRevoke == null)
+            throw new ElementNotFoundException(Role.class);
+
+        return revokeRole(userToUpdate, roleToRevoke);
+    }
+
+    public User addRole(User user, Role role) {
+        if (!user.getRoles().contains(role))
+            user.addRole(role);
+
+        return userRepository.save(user);
+    }
+
+    public User revokeRole(User user, Role role) {
+        if (user.getRoles().contains(role))
+            user.getRoles().remove(role);
+
+        return userRepository.save(user);
+    }
+
+
+    public User updatePassword(String username, String password) {
+        User userToUpdate = userRepository.findByUsername(username);
+        if (userToUpdate == null)
+            throw new ElementNotFoundException(User.class);
+
+        return updatePassword(userToUpdate, password);
+    }
+
+    private User updatePassword(User user, String password) {
         User userToUpdate = userRepository.findById(user.getId()).get();
+        if (userToUpdate == null)
+            throw new ElementNotFoundException(User.class);
+
         userToUpdate.setPassword(password);
         return userRepository.save(userToUpdate);
     }
 
-    public User updateEmail(User user, String email){
+    public User updateEmail(String username, String email) {
+        User userToUpdate = userRepository.findByUsername(username);
+        if (userToUpdate == null)
+            throw new ElementNotFoundException(User.class);
+
+        return updateEmail(userToUpdate, email);
+    }
+
+    private User updateEmail(User user, String email) {
         User userToUpdate = userRepository.findById(user.getId()).get();
+        if (userToUpdate == null)
+            throw new ElementNotFoundException(User.class);
+
         userToUpdate.setEmail(email);
         return userRepository.save(userToUpdate);
+    }
+
+    public void deleteUser(String username) {
+        User userToDelete = userRepository.findByUsername(username);
+        if (userToDelete == null)
+            throw new ElementNotFoundException(User.class);
+
+        userRepository.delete(userToDelete);
     }
 }

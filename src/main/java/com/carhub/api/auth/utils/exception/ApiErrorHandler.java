@@ -33,6 +33,7 @@ public class ApiErrorHandler {
             ElementNotFoundException.class,
             ElementNotCreatedException.class,
             ElementNotUpdatedException.class,
+            ElementNotDeletedException.class,
             HttpRequestMethodNotSupportedException.class,
             HttpMediaTypeNotSupportedException.class,
             HttpMediaTypeNotAcceptableException.class,
@@ -53,6 +54,7 @@ public class ApiErrorHandler {
         if(ex instanceof ElementNotFoundException) return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND,"error" , ex));
         else if(ex instanceof ElementNotCreatedException) return buildResponseEntity(new ApiError(HttpStatus.EXPECTATION_FAILED,"error" , ex));
         else if(ex instanceof ElementNotUpdatedException) return buildResponseEntity(new ApiError(HttpStatus.EXPECTATION_FAILED,"error" , ex));
+        else if(ex instanceof ElementNotDeletedException) return buildResponseEntity(new ApiError(HttpStatus.FORBIDDEN,"error" , ex));
         else if(ex instanceof HttpRequestMethodNotSupportedException) return buildResponseEntity(new ApiError(HttpStatus.METHOD_NOT_ALLOWED,"error" , ex));
         else if(ex instanceof HttpMediaTypeNotSupportedException) return buildResponseEntity(new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE,"error" , ex));
         else if(ex instanceof HttpMediaTypeNotAcceptableException) return buildResponseEntity(new ApiError(HttpStatus.NOT_ACCEPTABLE,"error" , ex));

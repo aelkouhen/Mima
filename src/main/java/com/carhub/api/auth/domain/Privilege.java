@@ -16,6 +16,7 @@ public class Privilege {
     @Type(type = "uuid-char")
     private UUID id;
 
+    @Column(name="name", unique=true)
     private String name;
 
     public String getName() {

@@ -23,12 +23,16 @@ public class User implements UserDetails {
 
     private String email;
 
+    @Column(name="username", unique=true)
     private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private boolean enabled;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created = Calendar.getInstance().getTime();
 
     @Column(name = "account_locked")
     private boolean accountLocked;
