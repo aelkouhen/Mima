@@ -14,7 +14,7 @@ public class PrivilegeService {
     private PrivilegeRepository privilegeRepository;
 
 
-    public Privilege CreatePrivilege(Privilege privilege){
+    public Privilege createPrivilege(Privilege privilege){
         return privilegeRepository.save(privilege);
     }
 

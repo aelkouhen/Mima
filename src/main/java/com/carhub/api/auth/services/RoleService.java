@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class RoleService {
@@ -19,7 +21,7 @@ public class RoleService {
     private PrivilegeRepository privilegeRepository;
 
 
-    public Role CreateRole(Role role){
+    public Role createRole(Role role){
         return roleRepository.save(role);
     }
 
@@ -35,4 +37,15 @@ public class RoleService {
         roleToUpdate.setName(name);
         return roleRepository.save(roleToUpdate);
     }
+
+    public Role findByName(String name){
+        Role roleToUpdate = roleRepository.findByName(name);
+        roleToUpdate.setName(name);
+        return roleRepository.save(roleToUpdate);
+    }
+
+    public List<Role> getRoles() {
+        return roleRepository.findAll();
+    }
+
 }

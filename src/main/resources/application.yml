@@ -7,7 +7,7 @@ spring:
     url: jdbc:mysql://localhost:3306/db_mima?useSSL=false
     username: mima
     password: password-mima
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     tomcat:
       test-while-idle: true
       validation-query: SELECT 1
@@ -16,11 +16,19 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       ddl-auto: create
   show-sql: true
+security:
+  oauth2:
+    resource:
+      token-type: Bearer
+      id: USER_ADMIN_RESOURCE
+
+swagger:
+  api:
+    version: 1.0
 
 check-user-scopes: true
