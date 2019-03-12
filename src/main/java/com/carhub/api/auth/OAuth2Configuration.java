@@ -73,11 +73,19 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         //clients.jdbc(dataSource).passwordEncoder(passwordEncoder);
         clients.inMemory()
-                .withClient("USER_CLIENT_APP")
+                .withClient("CLIENT_APP")
                 .secret(passwordEncoder.encode("password"))
                 .authorizedGrantTypes("authorization_code","password","refresh_token","implicit")
                 .scopes("READ_PRIVILEGE", "UPDATE_PRIVILEGE", "DELETE_PRIVILEGE", "CREATE_PRIVILEGE")
-                .resourceIds("USER_CLIENT_RESOURCE","USER_ADMIN_RESOURCE")
+                .resourceIds("CLIENT_RESOURCE")
+                .accessTokenValiditySeconds(ONE_DAY)
+                .refreshTokenValiditySeconds(ONE_MONTH)
+                .and()
+                .withClient("ADMIN_APP")
+                .secret(passwordEncoder.encode("admin"))
+                .authorizedGrantTypes("authorization_code","password","refresh_token","implicit")
+                .scopes("READ_PRIVILEGE", "UPDATE_PRIVILEGE", "DELETE_PRIVILEGE", "CREATE_PRIVILEGE")
+                .resourceIds("CLIENT_RESOURCE","ADMIN_RESOURCE")
                 .accessTokenValiditySeconds(ONE_DAY)
                 .refreshTokenValiditySeconds(ONE_MONTH);
     }
