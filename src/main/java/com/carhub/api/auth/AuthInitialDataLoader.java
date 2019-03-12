@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 @Component
 public class AuthInitialDataLoader implements ApplicationRunner {
