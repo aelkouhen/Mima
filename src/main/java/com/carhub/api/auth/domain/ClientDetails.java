@@ -16,18 +16,27 @@ public class ClientDetails {
     @Type(type = "uuid-char")
     private UUID id;
 
-    @Column(name="username", unique=true)
+    @Column(unique=true)
     private String clientId;
+
     private String clientSecret;
     private String resourceIds;
     private boolean secretRequired;
     private boolean scoped;
     private String scope;
+
+    @Column(nullable = false)
     private String authorizedGrantTypes;
+
     private String registeredRedirectUri;
     private String authorities;
+
+    @Column(nullable = false)
     private Integer accessTokenValiditySeconds;
+
+    @Column(nullable = false)
     private  Integer refreshTokenValiditySeconds;
+
     private boolean autoApprove;
 
 
