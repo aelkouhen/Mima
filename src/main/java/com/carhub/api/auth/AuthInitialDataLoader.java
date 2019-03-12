@@ -1,6 +1,6 @@
 package com.carhub.api.auth;
 
-import com.carhub.api.auth.domain.ClientDetails;
+import com.carhub.api.auth.domain.CustomClientDetails;
 import com.carhub.api.auth.domain.Privilege;
 import com.carhub.api.auth.domain.Role;
 import com.carhub.api.auth.domain.User;
@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class AuthInitialDataLoader implements ApplicationRunner {
@@ -49,31 +51,27 @@ public class AuthInitialDataLoader implements ApplicationRunner {
 
     public void run(ApplicationArguments args) {
 
-        ClientDetails clientApp = new ClientDetails();
+        CustomClientDetails clientApp = new CustomClientDetails();
 
-        clientApp.setResourceIds(String.join(",", Arrays.asList("CLIENT_RESOURCE")));
+        clientApp.setResourceIds(Stream.of("CLIENT_RESOURCE").collect(Collectors.toSet()));
         clientApp.setClientId("CLIENT_APP");
         clientApp.setClientSecret(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password"));
-        clientApp.setAuthorizedGrantTypes(String.join(",", Arrays.asList(PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT)));
-        clientApp.setScope(String.join(",", Arrays.asList(SCOPE_READ, SCOPE_CREATE, SCOPE_UPDATE, SCOPE_DELETE)));
-        clientApp.setSecretRequired(true);
+        clientApp.setAuthorizedGrantTypes(Stream.of(PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT).collect(Collectors.toSet()));
+        clientApp.setScope(Stream.of(SCOPE_READ, SCOPE_CREATE, SCOPE_UPDATE, SCOPE_DELETE).collect(Collectors.toSet()));
         clientApp.setAccessTokenValiditySeconds(ONE_DAY);
         clientApp.setRefreshTokenValiditySeconds(ONE_MONTH);
-        clientApp.setScoped(false);
 
         customClientDetailsService.createClient(clientApp);
 
-        ClientDetails adminApp = new ClientDetails();
+        CustomClientDetails adminApp = new CustomClientDetails();
 
-        adminApp.setResourceIds(String.join(",", Arrays.asList("CLIENT_RESOURCE", "ADMIN_RESOURCE")));
+        adminApp.setResourceIds(Stream.of("CLIENT_RESOURCE", "ADMIN_RESOURCE").collect(Collectors.toSet()));
         adminApp.setClientId("ADMIN_APP");
         adminApp.setClientSecret(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("admin"));
-        adminApp.setAuthorizedGrantTypes(String.join(",", Arrays.asList(PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT)));
-        adminApp.setScope(String.join(",", Arrays.asList(SCOPE_READ, SCOPE_CREATE, SCOPE_UPDATE, SCOPE_DELETE)));
-        adminApp.setSecretRequired(true);
+        adminApp.setAuthorizedGrantTypes(Stream.of(PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT).collect(Collectors.toSet()));
+        adminApp.setScope(Stream.of(SCOPE_READ, SCOPE_CREATE, SCOPE_UPDATE, SCOPE_DELETE).collect(Collectors.toSet()));
         adminApp.setAccessTokenValiditySeconds(ONE_DAY);
         adminApp.setRefreshTokenValiditySeconds(ONE_MONTH);
-        adminApp.setScoped(false);
 
         customClientDetailsService.createClient(adminApp);
 
