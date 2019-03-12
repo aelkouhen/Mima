@@ -1,8 +1,10 @@
 package com.carhub.api.auth;
 
+import com.carhub.api.auth.domain.ClientDetails;
 import com.carhub.api.auth.domain.Privilege;
 import com.carhub.api.auth.domain.Role;
 import com.carhub.api.auth.domain.User;
+import com.carhub.api.auth.services.CustomClientDetailsService;
 import com.carhub.api.auth.services.CustomUserDetailsService;
 import com.carhub.api.auth.services.PrivilegeService;
 import com.carhub.api.auth.services.RoleService;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Component
 public class AuthInitialDataLoader implements ApplicationRunner {
@@ -28,9 +32,53 @@ public class AuthInitialDataLoader implements ApplicationRunner {
     RoleService roleService;
 
     @Autowired
+    CustomClientDetailsService customClientDetailsService;
+
+    @Autowired
     PrivilegeService privilegeService;
 
+    static final int ONE_DAY= 60 * 60 * 24;
+    static final int ONE_MONTH = ONE_DAY * 30;
+    static final String PASSWORD = "password";
+    static final String AUTHORIZATION_CODE = "authorization_code";
+    static final String REFRESH_TOKEN = "refresh_token";
+    static final String IMPLICIT = "implicit";
+    static final String SCOPE_READ = "READ_PRIVILEGE";
+    static final String SCOPE_CREATE = "CREATE_PRIVILEGE";
+    static final String SCOPE_UPDATE = "UPDATE_PRIVILEGE";
+    static final String SCOPE_DELETE = "DELETE_PRIVILEGE";
+
+
     public void run(ApplicationArguments args) {
+
+        ClientDetails clientApp = new ClientDetails();
+
+        clientApp.setResourceIds(String.join(",", Arrays.asList("CLIENT_RESOURCE")));
+        clientApp.setClientId("CLIENT_APP");
+        clientApp.setClientSecret(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password"));
+        clientApp.setAuthorizedGrantTypes(String.join(",", Arrays.asList(PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT)));
+        clientApp.setScope(String.join(",", Arrays.asList(SCOPE_READ, SCOPE_CREATE, SCOPE_UPDATE, SCOPE_DELETE)));
+        clientApp.setSecretRequired(true);
+        clientApp.setAccessTokenValiditySeconds(ONE_DAY);
+        clientApp.setRefreshTokenValiditySeconds(ONE_MONTH);
+        clientApp.setScoped(false);
+
+        customClientDetailsService.createClient(clientApp);
+
+        ClientDetails adminApp = new ClientDetails();
+
+        adminApp.setResourceIds(String.join(",", Arrays.asList("CLIENT_RESOURCE", "ADMIN_RESOURCE")));
+        adminApp.setClientId("ADMIN_APP");
+        adminApp.setClientSecret(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("admin"));
+        adminApp.setAuthorizedGrantTypes(String.join(",", Arrays.asList(PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT)));
+        adminApp.setScope(String.join(",", Arrays.asList(SCOPE_READ, SCOPE_CREATE, SCOPE_UPDATE, SCOPE_DELETE)));
+        adminApp.setSecretRequired(true);
+        adminApp.setAccessTokenValiditySeconds(ONE_DAY);
+        adminApp.setRefreshTokenValiditySeconds(ONE_MONTH);
+        adminApp.setScoped(false);
+
+        customClientDetailsService.createClient(adminApp);
+
 
         Privilege p1 = new Privilege("READ_PRIVILEGE");
         privilegeService.createPrivilege(p1);
@@ -68,18 +116,5 @@ public class AuthInitialDataLoader implements ApplicationRunner {
         User admin = new User("admin", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password"), "admin@user.io");
         admin.addRole(adminRole);
         userDetailsService.createUser(admin);
-
-        /*
-        BaseClientDetails client = new BaseClientDetails("USER_CLIENT_APP", "USER_CLIENT_RESOURCE,USER_ADMIN_RESOURCE",
-                userRole.getName() + "," + adminRole.getName(), "authorization_code,password,refresh_token,implicit", null);
-
-        client.setClientSecret(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password"));
-        client.setAccessTokenValiditySeconds(ONE_DAY);
-        client.setRefreshTokenValiditySeconds(ONE_MONTH);
-        client.setRegisteredRedirectUri(null);
-
-        JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
-        clientDetailsService.addClientDetails(client);
-        */
     }
 }

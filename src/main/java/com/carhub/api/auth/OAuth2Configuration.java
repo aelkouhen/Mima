@@ -2,6 +2,7 @@ package com.carhub.api.auth;
 
 import javax.sql.DataSource;
 
+import com.carhub.api.auth.services.CustomClientDetailsService;
 import com.carhub.api.auth.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,18 +42,15 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
-    private ClientDetailsService clientDetailsService;
+    private CustomClientDetailsService customClientDetailsService;
 
     @Autowired
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
-    public static final int ONE_DAY= 60 * 60 * 24;
-    public static final int ONE_MONTH = ONE_DAY * 30;
-
     @Bean
     public OAuth2RequestFactory requestFactory() {
-        CustomOauth2RequestFactory requestFactory = new CustomOauth2RequestFactory(clientDetailsService);
+        CustomOauth2RequestFactory requestFactory = new CustomOauth2RequestFactory(customClientDetailsService);
         requestFactory.setCheckUserScopes(true);
         return requestFactory;
     }
@@ -71,7 +69,7 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        //clients.jdbc(dataSource).passwordEncoder(passwordEncoder);
+        /*
         clients.inMemory()
                 .withClient("CLIENT_APP")
                 .secret(passwordEncoder.encode("password"))
@@ -88,6 +86,8 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
                 .resourceIds("CLIENT_RESOURCE","ADMIN_RESOURCE")
                 .accessTokenValiditySeconds(ONE_DAY)
                 .refreshTokenValiditySeconds(ONE_MONTH);
+        */
+        clients.withClientDetails(customClientDetailsService);
     }
 
 
@@ -109,5 +109,4 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
         if (checkUserScopes)
             endpoints.requestFactory(requestFactory());
     }
-
 }
