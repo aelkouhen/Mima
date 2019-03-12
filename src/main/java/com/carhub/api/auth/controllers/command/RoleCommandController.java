@@ -42,7 +42,7 @@ public class RoleCommandController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @PatchMapping(value = "/roles/{role}/revoke")
-    public ResponseEntity<?> updateUserRevokeRole(@PathVariable(value = "role") String role, @RequestParam(name = "privilege") String privilege){
+    public ResponseEntity<?> updateRoleRevokeProvilege(@PathVariable(value = "role") String role, @RequestParam(name = "privilege") String privilege){
         Role updated = roleService.revokePrivilege(role, privilege);
         if(updated == null) throw new ElementNotUpdatedException(Role.class);
 

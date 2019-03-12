@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")
@@ -66,15 +65,6 @@ public class UserQueryController {
     @ResponseBody
     public ResponseEntity<UserDetails> findUserByUsername(@RequestParam(name = "username") String username){
         UserDetails result = userDetailsService.loadUserByUsername(username);
-        if (result == null) throw new ElementNotFoundException(User.class);
-        return ResponseEntity.ok(result);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(value = "/users/find", params = "id")
-    @ResponseBody
-    public ResponseEntity<UserDetails> findUserById(@RequestParam(name = "id") String id){
-        UserDetails result = userDetailsService.loadUserById(UUID.fromString(id));
         if (result == null) throw new ElementNotFoundException(User.class);
         return ResponseEntity.ok(result);
     }

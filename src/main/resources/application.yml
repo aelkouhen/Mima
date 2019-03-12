@@ -8,10 +8,6 @@ spring:
     username: mima
     password: password-mima
     driver-class-name: com.mysql.cj.jdbc.Driver
-    tomcat:
-      test-while-idle: true
-      validation-query: SELECT 1
-    initialization-mode: never
     platform: mysql
   jpa:
     properties:
@@ -25,10 +21,6 @@ security:
   oauth2:
     resource:
       token-type: Bearer
-      id: USER_ADMIN_RESOURCE
-
-swagger:
-  api:
-    version: 1.0
+      id: ADMIN_RESOURCE
 
 check-user-scopes: true

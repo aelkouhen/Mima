@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 
 @Service(value = "userDetailsService")
@@ -33,17 +32,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
-
-        if (user == null)
-            throw new BadCredentialsException("Bad credentials");
-
-        new AccountStatusUserDetailsChecker().check(user);
-
-        return user;
-    }
-
-    public UserDetails loadUserById(UUID id) {
-        User user = userRepository.findById(id).get();
 
         if (user == null)
             throw new BadCredentialsException("Bad credentials");
@@ -135,7 +123,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private User updatePassword(User user, String password) {
-        User userToUpdate = userRepository.findById(user.getId()).get();
+        User userToUpdate = userRepository.findByUsername(user.getUsername());
         if (userToUpdate == null)
             throw new ElementNotFoundException(User.class);
 
@@ -152,7 +140,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private User updateEmail(User user, String email) {
-        User userToUpdate = userRepository.findById(user.getId()).get();
+        User userToUpdate = userRepository.findByUsername(user.getUsername());
         if (userToUpdate == null)
             throw new ElementNotFoundException(User.class);
 

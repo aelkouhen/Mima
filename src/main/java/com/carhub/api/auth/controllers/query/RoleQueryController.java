@@ -36,7 +36,7 @@ public class RoleQueryController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/roles/find", params = "name")
     @ResponseBody
-    public ResponseEntity<Role> findUserByUsername(@RequestParam(name = "name") String name){
+    public ResponseEntity<Role> findRoleByname(@RequestParam(name = "name") String name){
         Role result = roleService.findByName(name);
         if (result == null) throw new ElementNotFoundException(Role.class);
         return ResponseEntity.ok(result);
