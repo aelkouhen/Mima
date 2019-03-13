@@ -23,4 +23,8 @@ security:
       token-type: Bearer
       id: ADMIN_RESOURCE
 
+logging:
+  level:
+    org.hibernate : ERROR
+
 check-user-scopes: true
