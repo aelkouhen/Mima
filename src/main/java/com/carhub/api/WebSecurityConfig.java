@@ -1,4 +1,4 @@
-package com.carhub.api.auth;
+package com.carhub.api;
 
 import com.carhub.api.auth.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().exceptionHandling()
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/v2/**").permitAll()
+                .and()
+                .exceptionHandling()
                 .authenticationEntryPoint(
                         (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
                 .and().authorizeRequests().antMatchers("/**").authenticated().and().httpBasic();

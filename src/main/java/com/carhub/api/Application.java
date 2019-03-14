@@ -1,4 +1,4 @@
-package com.carhub.api.auth;
+package com.carhub.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

@@ -1,4 +1,4 @@
-package com.carhub.api.auth;
+package com.carhub.api;
 
 import com.carhub.api.auth.domain.CustomClientDetails;
 import com.carhub.api.auth.domain.Privilege;
