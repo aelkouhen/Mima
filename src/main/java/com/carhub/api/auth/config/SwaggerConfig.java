@@ -1,4 +1,4 @@
-package com.carhub.api;
+package com.carhub.api.auth.config;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

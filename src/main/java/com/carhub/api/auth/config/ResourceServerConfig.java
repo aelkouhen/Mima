@@ -1,4 +1,4 @@
-package com.carhub.api;
+package com.carhub.api.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
