@@ -4,6 +4,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -43,6 +44,7 @@ public class User implements UserDetails {
     @Column(name = "credentials_expired")
     private boolean credentialsExpired;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_user", joinColumns = {
             @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = {
@@ -82,6 +84,7 @@ public class User implements UserDetails {
     /*
      * Get roles and permissions and add them as a Set of GrantedAuthority
      */
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();

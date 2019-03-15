@@ -28,6 +28,14 @@ public class PrivilegeService {
         privilegeRepository.delete(privilegeToDelete);
     }
 
+    public Privilege findByName(String name){
+        Privilege privilege = privilegeRepository.findByName(name);
+        if(privilege == null)
+            throw new ElementNotFoundException(Privilege.class);
+
+        return privilege;
+    }
+
     public List<Privilege> getPrivileges() {
         return privilegeRepository.findAll();
     }

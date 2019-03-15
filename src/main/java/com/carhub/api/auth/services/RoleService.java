@@ -65,11 +65,11 @@ public class RoleService {
     }
 
     public Role findByName(String name){
-        Role roleToUpdate = roleRepository.findByName(name);
-        if(roleToUpdate == null)
+        Role role = roleRepository.findByName(name);
+        if(role == null)
             throw new ElementNotFoundException(Role.class);
 
-        return roleRepository.save(roleToUpdate);
+        return role;
     }
 
     public List<Role> getRoles() {

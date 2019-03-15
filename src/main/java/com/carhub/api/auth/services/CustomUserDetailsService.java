@@ -58,6 +58,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public User createUser(User user) {
+        Role role = roleRepository.findByName("ROLE_USER");
+        user.addRole(role);
+
         return userRepository.save(user);
     }
 
@@ -84,7 +87,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (roleToGrant == null)
             throw new ElementNotFoundException(Role.class);
 
-        return addRole(userToUpdate, roleToGrant);
+        return grantRole(userToUpdate, roleToGrant);
     }
 
     public User revokeRole(String username, String role) {
@@ -99,7 +102,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return revokeRole(userToUpdate, roleToRevoke);
     }
 
-    public User addRole(User user, Role role) {
+    public User grantRole(User user, Role role) {
         if (!user.getRoles().contains(role))
             user.addRole(role);
 

@@ -16,7 +16,7 @@ spring:
     hibernate:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       ddl-auto: create
-  show-sql: true
+    show-sql: true
 security:
   oauth2:
     resource:
