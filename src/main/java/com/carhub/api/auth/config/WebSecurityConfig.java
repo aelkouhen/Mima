@@ -43,12 +43,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/v2/**").permitAll()
+                .antMatchers("/auth/swagger-ui.html", "/auth/swagger-resources/**", "/auth/v2/**").permitAll()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(
                         (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
-                .and().authorizeRequests().antMatchers("/**").authenticated().and().httpBasic();
+                .and().authorizeRequests().antMatchers("/auth/**").authenticated().and().httpBasic();
     }
 
     @Override

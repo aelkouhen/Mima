@@ -28,7 +28,7 @@ public class SwaggerConfig {
     @Value("${swagger.api.version}")
     private String apiVersion;
     final static String AUTHORIZATION_HEADER = "Authorization";
-    final static String DEFAULT_INCLUDE_PATTERN = "/api/.*";
+    final static String DEFAULT_INCLUDE_PATTERN = "/v1/.*";
 
     @Bean
     public Docket api() {

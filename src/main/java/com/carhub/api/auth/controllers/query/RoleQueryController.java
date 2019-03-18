@@ -17,7 +17,7 @@ import java.util.List;
 
 @Api(value = "Role", tags = {"Role Queries"}, description = "This API queries the Role concept.")
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/v1")
 public class RoleQueryController {
 
     @Autowired

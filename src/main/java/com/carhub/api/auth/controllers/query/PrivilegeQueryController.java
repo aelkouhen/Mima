@@ -14,7 +14,7 @@ import java.util.List;
 
 @Api(value = "Privilege", tags = {"Privilege Queries"}, description = "This API queries the Privilege concept.")
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/v1")
 public class PrivilegeQueryController {
 
     @Autowired

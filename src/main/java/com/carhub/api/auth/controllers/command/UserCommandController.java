@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(value = "User", tags = {"User Commands"}, description = "This API commands the User concept.")
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/v1")
 public class UserCommandController {
 
     @Autowired

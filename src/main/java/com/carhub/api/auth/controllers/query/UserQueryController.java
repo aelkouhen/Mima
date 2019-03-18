@@ -21,7 +21,7 @@ import java.util.List;
 
 @Api(value = "User", tags = {"User Queries"}, description = "This API queries the User concept.")
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/v1")
 public class UserQueryController {
 
     @Autowired

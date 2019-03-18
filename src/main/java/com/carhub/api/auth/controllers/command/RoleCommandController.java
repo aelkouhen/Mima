@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(value = "Role", tags = {"Role Commands"}, description = "This API commands the Role concept.")
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/v1")
 public class RoleCommandController {
 
     @Autowired

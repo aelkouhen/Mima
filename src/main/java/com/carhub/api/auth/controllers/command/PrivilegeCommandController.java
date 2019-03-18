@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(value = "Privilege", tags = {"Privilege Commands"}, description = "This API commands the Privilege concept.")
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/v1")
 public class PrivilegeCommandController {
 
     @Autowired
