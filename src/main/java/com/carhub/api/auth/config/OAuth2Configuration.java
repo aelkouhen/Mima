@@ -17,8 +17,13 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.approval.ApprovalStore;
+import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
+import org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpointAuthenticationFilter;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -42,6 +47,9 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
     private CustomClientDetailsService customClientDetailsService;
+
+    @Autowired
+    private ClientDetailsService clientDetailsService;
 
     @Autowired
     @Qualifier("authenticationManagerBean")
@@ -89,7 +97,6 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
         clients.withClientDetails(customClientDetailsService);
     }
 
-
     @Bean
     public TokenEndpointAuthenticationFilter tokenEndpointAuthenticationFilter() {
         return new TokenEndpointAuthenticationFilter(authenticationManager, requestFactory());
@@ -103,9 +110,42 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(tokenStore()).tokenEnhancer(jwtAccessTokenConverter())
+        endpoints
+                .approvalStore(approvalStore())
+                .userApprovalHandler(userApprovalHandler())
+                .tokenStore(tokenStore()).tokenEnhancer(jwtAccessTokenConverter())
+                .userApprovalHandler(userApprovalHandler())
                 .authenticationManager(authenticationManager).userDetailsService(userDetailsService);
+
         if (checkUserScopes)
             endpoints.requestFactory(requestFactory());
+    }
+
+    @Bean
+    @Autowired
+    public TokenStoreUserApprovalHandler userApprovalHandler(){
+        TokenStoreUserApprovalHandler handler = new TokenStoreUserApprovalHandler();
+        handler.setTokenStore(tokenStore());
+        handler.setRequestFactory(new DefaultOAuth2RequestFactory(clientDetailsService));
+        handler.setClientDetailsService(clientDetailsService);
+        return handler;
+    }
+
+    @Bean
+    @Autowired
+    public TokenStoreUserApprovalHandler userApprovalHandler(TokenStore tokenStore){
+        TokenStoreUserApprovalHandler handler = new TokenStoreUserApprovalHandler();
+        handler.setTokenStore(tokenStore);
+        handler.setRequestFactory(new DefaultOAuth2RequestFactory(clientDetailsService));
+        handler.setClientDetailsService(clientDetailsService);
+        return handler;
+    }
+
+    @Bean
+    @Autowired
+    public ApprovalStore approvalStore() throws Exception {
+        TokenApprovalStore store = new TokenApprovalStore();
+        store.setTokenStore(tokenStore());
+        return store;
     }
 }

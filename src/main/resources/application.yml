@@ -20,6 +20,8 @@ spring:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       ddl-auto: create
     show-sql: true
+  batch:
+    initialize-schema: never
 security:
   oauth2:
     resource:
