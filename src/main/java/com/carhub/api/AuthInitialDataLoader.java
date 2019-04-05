@@ -97,13 +97,14 @@ public class AuthInitialDataLoader implements ApplicationRunner {
         userRole.setPrivileges(Arrays.asList(p1, p4));
         roleService.createRole(userRole);
 
-        Role guestRole = new Role("ROLE_GUEST");
-        guestRole.setPrivileges(Arrays.asList(p1));
-        roleService.createRole(guestRole);
 
-        User guest = new User("guest", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password"), "guest@user.io");
-        guest.addRole(guestRole);
-        userDetailsService.createUser(guest);
+        User ranaApi = new User("rana", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password-rana"), "rana-api@user.io");
+        ranaApi.addRole(adminRole);
+        userDetailsService.createUser(ranaApi);
+
+        User lyneApi = new User("lyne", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password-lyne"), "lyne-api@user.io");
+        lyneApi.addRole(adminRole);
+        userDetailsService.createUser(lyneApi);
 
         User simple = new User("user", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password"), "user@user.io");
         simple.addRole(userRole);
